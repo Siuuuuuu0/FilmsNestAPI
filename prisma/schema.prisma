@@ -34,7 +34,7 @@ model MovieActor {
   @@id([movieId, actorId])
   Movie   Movie @relation(fields: [movieId], references: [id])
   Actor   Actor @relation(fields: [actorId], references: [id])
-  movieId Int
+  movieId Int 
   actorId Int
 }
 
