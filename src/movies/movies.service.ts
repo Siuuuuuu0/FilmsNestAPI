@@ -6,16 +6,17 @@ import { DatabaseService } from 'src/database/database.service';
 export class MoviesService {
   constructor(private readonly prisma: DatabaseService) {}
 
-  async findAll(): Promise<Movie[]> {
+  async findAll(filters: { title?: string; releaseYear?: number; directorId?: number; actorIds?: number[] }): Promise<Movie[]> {
+    const { title, releaseYear, directorId, actorIds } = filters;
+
     return this.prisma.movie.findMany({
-      include: {
-        director: true,
-        actors: {
-          include: {
-            Actor: true,
-          },
-        },
+      where: {
+        title: title ? { contains: title, mode: 'insensitive' } : undefined,
+        releaseYear,
+        directorId,
+        actors: actorIds && actorIds.length > 0 ? { some: { actorId: { in: actorIds } } } : undefined,
       },
+      include: { actors: true, director: true },
     });
   }
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { Movie } from '@prisma/client';
 
@@ -7,13 +7,27 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Get()
-  async findAll(): Promise<Movie[]> {
-    return this.moviesService.findAll();
+  async findAll(
+    @Query('title') title?: string,
+    @Query('releaseYear') releaseYear?: string,
+    @Query('directorId') directorId?: string,
+    @Query('actorIds') actorIds?: string[]
+  ): Promise<Movie[]> {
+    const parsedReleaseYear = releaseYear ? parseInt(releaseYear, 10) : undefined;
+    const parsedDirectorId = directorId ? parseInt(directorId, 10) : undefined;
+    const parsedActorIds = actorIds ? actorIds.map(id => parseInt(id, 10)) : undefined;
+
+    return this.moviesService.findAll({
+      title,
+      releaseYear: parsedReleaseYear,
+      directorId: parsedDirectorId,
+      actorIds: parsedActorIds,
+    });
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Movie> {
-    return this.moviesService.findOne(id);
+    return this.moviesService.findOne(+id);
   }
 
   @Post()
