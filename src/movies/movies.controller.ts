@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Query } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { Movie } from '@prisma/client';
+import { MovieReturnType } from './movies.service';
+
 
 @Controller('movies')
 export class MoviesController {
@@ -12,17 +14,19 @@ export class MoviesController {
     @Query('releaseYear') releaseYear?: string,
     @Query('directorId') directorId?: string,
     @Query('actorIds') actorIds?: string[]
-  ): Promise<Movie[]> {
+  ): Promise<MovieReturnType[]> {
     const parsedReleaseYear = releaseYear ? parseInt(releaseYear, 10) : undefined;
     const parsedDirectorId = directorId ? parseInt(directorId, 10) : undefined;
     const parsedActorIds = actorIds ? actorIds.map(id => parseInt(id, 10)) : undefined;
 
-    return this.moviesService.findAll({
+    const movies = await this.moviesService.findAll({
       title,
       releaseYear: parsedReleaseYear,
       directorId: parsedDirectorId,
       actorIds: parsedActorIds,
     });
+
+    return movies;
   }
 
   @Get(':id')
