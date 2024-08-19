@@ -6,10 +6,17 @@ import { Actor } from '@prisma/client';
 export class ActorsService {
   constructor(private prisma: DatabaseService) {}
 
-  async findAll(): Promise<Actor[]> {
+  async findAll(filters:{last_name?: string}): Promise<Actor[]> {
     return this.prisma.actor.findMany({
+      where: {
+          last_name: {
+              contains: filters.last_name, 
+              mode: 'insensitive', 
+          },
+      },
       include: { movies: true },
-    });
+  });
+
   }
 
   async findOne(id: number): Promise<Actor | null> {

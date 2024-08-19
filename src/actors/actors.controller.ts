@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query } from '@nestjs/common';
 import { ActorsService } from './actors.service';
 import { Actor } from '@prisma/client';
 
@@ -7,8 +7,8 @@ export class ActorsController {
   constructor(private readonly actorService: ActorsService) {}
 
   @Get()
-  async findAll(): Promise<Actor[]> {
-    return this.actorService.findAll();
+  async findAll(@Query('last_name') last_name?: string): Promise<Actor[]> {
+    return this.actorService.findAll({last_name});
   }
 
   @Get(':id')
