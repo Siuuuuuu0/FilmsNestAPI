@@ -13,7 +13,8 @@ export class MoviesController {
     @Query('title') title?: string,
     @Query('releaseYear') releaseYear?: string,
     @Query('directorId') directorId?: string,
-    @Query('actorIds') actorIds?: string[] | string
+    @Query('actorIds') actorIds?: string[] | string, 
+    @Query('genres') genres?: string[] | string
   ): Promise<MovieReturnType[]> {
     const parsedReleaseYear = releaseYear ? parseInt(releaseYear, 10) : undefined;
     const parsedDirectorId = directorId ? parseInt(directorId, 10) : undefined;
@@ -24,6 +25,7 @@ export class MoviesController {
       releaseYear: parsedReleaseYear,
       directorId: parsedDirectorId,
       actorIds: parsedActorIds,
+      genres: [...genres]
     });
 
     return movies;

@@ -13,7 +13,9 @@ model Movie {
   releaseYear Int
   director    Director   @relation(fields: [directorId], references: [id])
   directorId  Int
-  actors MovieActor[]
+  actors MovieActor[] 
+  genres String[] @default([])
+  description String @default("")
 }
 
 model Director {

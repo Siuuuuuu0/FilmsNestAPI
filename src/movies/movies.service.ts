@@ -7,15 +7,17 @@ export type MovieReturnType = {
   title: string,
   releaseYear: number,
   director : Director, 
-  actors: Actor[]
+  actors: Actor[], 
+  genres: string[], 
+  description: string
 }
 
 @Injectable()
 export class MoviesService {
   constructor(private readonly prisma: DatabaseService) {}
 
-  async findAll(filters: { title?: string; releaseYear?: number; directorId?: number; actorIds?: number[] }): Promise<MovieReturnType[]> {
-    const { title, releaseYear, directorId, actorIds } = filters;
+  async findAll(filters: { title?: string; releaseYear?: number; directorId?: number; actorIds?: number[], genres?: string[] }): Promise<MovieReturnType[]> {
+    const { title, releaseYear, directorId, actorIds, genres } = filters;
 
     const movies = await this.prisma.movie.findMany({
       where: {
@@ -23,6 +25,7 @@ export class MoviesService {
         releaseYear,
         directorId,
         actors: actorIds && actorIds.length > 0 ? { some: { actorId: { in: actorIds } } } : undefined,
+        genres: genres && genres.length > 0 ? { hasSome: genres } : undefined,
       },
       include: { actors: true, director: true },
     });
@@ -36,6 +39,8 @@ export class MoviesService {
         releaseYear: movie.releaseYear,
         director: movie.director,
         actors: actors,  
+        genres: movie.genres, 
+        description: movie.description
       };
     }));
     return response;
