@@ -14,18 +14,23 @@ export class MoviesController {
     @Query('releaseYear') releaseYear?: string,
     @Query('directorId') directorId?: string,
     @Query('actorIds') actorIds?: string[] | string, 
-    @Query('genres') genres?: string[] | string
+    @Query('genres') genres?: string[] | string,
   ): Promise<MovieReturnType[]> {
     const parsedReleaseYear = releaseYear ? parseInt(releaseYear, 10) : undefined;
     const parsedDirectorId = directorId ? parseInt(directorId, 10) : undefined;
-    const parsedActorIds = actorIds&&Array.isArray(actorIds) ? actorIds.map(id => parseInt(id, 10)) :typeof actorIds === 'string' ? [parseInt(actorIds, 10)] : undefined;
+    const parsedActorIds = actorIds && Array.isArray(actorIds) ? actorIds.map(id => parseInt(id, 10)) : typeof actorIds === 'string' ? [parseInt(actorIds, 10)] : undefined;
+    const parsedGenres = genres
+    ? Array.isArray(genres)
+      ? genres
+      : [genres]
+    : undefined;
 
     const movies = await this.moviesService.findAll({
       title,
       releaseYear: parsedReleaseYear,
       directorId: parsedDirectorId,
       actorIds: parsedActorIds,
-      genres: [...genres]
+      genres: parsedGenres
     });
 
     return movies;

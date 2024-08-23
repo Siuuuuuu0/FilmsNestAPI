@@ -16,7 +16,7 @@ export type MovieReturnType = {
 export class MoviesService {
   constructor(private readonly prisma: DatabaseService) {}
 
-  async findAll(filters: { title?: string; releaseYear?: number; directorId?: number; actorIds?: number[], genres?: string[] }): Promise<MovieReturnType[]> {
+  async findAll(filters: { title?: string; releaseYear?: number; directorId?: number; actorIds?: number[]; genres?: string[] }): Promise<MovieReturnType[]> {
     const { title, releaseYear, directorId, actorIds, genres } = filters;
 
     const movies = await this.prisma.movie.findMany({
